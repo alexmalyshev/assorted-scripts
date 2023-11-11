@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 A fun little script to work with Morse code.  Inspired by the following
 Mastodon post:
