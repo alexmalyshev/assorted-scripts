@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""
+r"""
 A fun little script to work with Morse code.  Inspired by the following
 Mastodon post:
 
@@ -123,10 +123,15 @@ def text_to_morse(s: str) -> Text:
     return [word_to_morse(word) for word in s.split()]
 
 
-def set_thinkpad_led(on: bool) -> None:
+async def set_thinkpad_led(on: bool) -> None:
     """Turn the Thinkpad LED on or off."""
-    # TODO: Ideally this would be asyncio too but that requires threads.
+
     value = "255" if on else "0"
+
+    # TODO: Ideally this would be asyncio, but that requires threads which isn't
+    # worth it.
+    #
+    # TODO: Can we keep this file handle open for longer than a single write?
     with open("/sys/class/leds/tpacpi::lid_logo_dot/brightness", "w") as led:
         led.write(value)
 
@@ -134,9 +139,9 @@ def set_thinkpad_led(on: bool) -> None:
 async def display_thinkpad_symbol(symbol: Symbol, time_unit_ms: int) -> None:
     """Display a Morse code symbol on the Thinkpad LED."""
     time_unit_s = time_unit_ms / 1000
-    set_thinkpad_led(True)
+    await set_thinkpad_led(True)
     await asyncio.sleep(symbol.time_units() * time_unit_s)
-    set_thinkpad_led(False)
+    await set_thinkpad_led(False)
 
 
 async def print_symbol(symbol: Symbol, time_unit_ms: int) -> None:
